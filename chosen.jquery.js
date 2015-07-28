@@ -144,7 +144,8 @@
       this.inherit_select_classes = this.options.inherit_select_classes || false;
       this.display_selected_options = this.options.display_selected_options != null ? this.options.display_selected_options : true;
       this.display_disabled_options = this.options.display_disabled_options != null ? this.options.display_disabled_options : true;
-      return this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
+      this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
+      return this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -200,15 +201,21 @@
     };
 
     AbstractChosen.prototype.results_option_build = function(options) {
-      var content, data, _i, _len, _ref;
+      var content, data, data_content, shown_results, _i, _len, _ref;
       content = '';
+      shown_results = 0;
       _ref = this.results_data;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         data = _ref[_i];
+        data_content = '';
         if (data.group) {
-          content += this.result_add_group(data);
+          data_content = this.result_add_group(data);
         } else {
-          content += this.result_add_option(data);
+          data_content = this.result_add_option(data);
+        }
+        if (data_content !== '') {
+          shown_results++;
+          content += data_content;
         }
         if (options != null ? options.first : void 0) {
           if (data.selected && this.is_multiple) {
@@ -216,6 +223,9 @@
           } else if (data.selected && !this.is_multiple) {
             this.single_set_selected_text(this.choice_label(data));
           }
+        }
+        if (shown_results >= this.max_shown_results) {
+          break;
         }
       }
       return content;
