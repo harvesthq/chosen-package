@@ -4,9 +4,7 @@
   "version": "1.4.2",
   "main": [
     "chosen.jquery.js",
-    "chosen.css",
-    "chosen-sprite@2x.png",
-    "chosen-sprite.png"
+    "chosen.css"
   ],
   "license": [
     {
