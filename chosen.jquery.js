@@ -571,9 +571,13 @@
         var $this, chosen;
         $this = $(this);
         chosen = $this.data('chosen');
-        if (options === 'destroy' && chosen instanceof Chosen) {
-          chosen.destroy();
-        } else if (!(chosen instanceof Chosen)) {
+        if (options === 'destroy') {
+          if (chosen instanceof Chosen) {
+            chosen.destroy();
+          }
+          return;
+        }
+        if (!(chosen instanceof Chosen)) {
           $this.data('chosen', new Chosen(this, options));
         }
       });
