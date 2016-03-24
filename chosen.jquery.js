@@ -145,7 +145,8 @@
       this.display_selected_options = this.options.display_selected_options != null ? this.options.display_selected_options : true;
       this.display_disabled_options = this.options.display_disabled_options != null ? this.options.display_disabled_options : true;
       this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
-      return this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
+      this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
+      return this.case_sensitive_search = this.options.case_sensitive_search || false;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -388,9 +389,10 @@
     };
 
     AbstractChosen.prototype.get_search_regex = function(escaped_search_string) {
-      var regex_anchor;
+      var regex_anchor, regex_flag;
       regex_anchor = this.search_contains ? "" : "^";
-      return new RegExp(regex_anchor + escaped_search_string, 'i');
+      regex_flag = this.case_sensitive_search ? "" : "i";
+      return new RegExp(regex_anchor + escaped_search_string, regex_flag);
     };
 
     AbstractChosen.prototype.search_string_match = function(search_string, regex) {
