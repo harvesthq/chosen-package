@@ -36,7 +36,9 @@
   },
   "files": [
     "chosen.jquery.js",
-    "chosen.css"
+    "chosen.css",
+    "chosen-sprite@2x.png",
+    "chosen-sprite.png"
   ],
   "main": "chosen.jquery.js",
   "repository": {
