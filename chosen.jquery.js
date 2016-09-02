@@ -1037,7 +1037,11 @@
         high.addClass("result-selected");
         item = this.results_data[high[0].getAttribute("data-option-array-index")];
         item.selected = true;
-        this.form_field.options[item.options_index].selected = true;
+        try {
+          this.form_field.options[item.options_index].selected = true;
+        } catch (e) {
+          this.form_field.options[item.options_index - 1].selected = true;
+        }
         this.selected_option_count = null;
         if (this.is_multiple) {
           this.choice_build(item);
