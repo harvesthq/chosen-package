@@ -146,7 +146,8 @@
       this.display_disabled_options = this.options.display_disabled_options != null ? this.options.display_disabled_options : true;
       this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
       this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
-      return this.case_sensitive_search = this.options.case_sensitive_search || false;
+      this.case_sensitive_search = this.options.case_sensitive_search || false;
+      return this.hide_results_on_select = this.options.hide_results_on_select != null ? this.options.hide_results_on_select : true;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -1044,7 +1045,7 @@
         } else {
           this.single_set_selected_text(this.choice_label(item));
         }
-        if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
+        if (!(this.is_multiple && (!this.hide_results_on_select || (evt.metaKey || evt.ctrlKey)))) {
           this.results_hide();
         }
         this.show_search_field_default();
