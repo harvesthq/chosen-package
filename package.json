@@ -31,9 +31,7 @@
       "url": "https://github.com/koenpunt"
     }
   ],
-  "dependencies": {
-    "jquery": ">=1.4.4"
-  },
+  "dependencies": {},
   "files": [
     "chosen.jquery.js",
     "chosen.css",
