@@ -334,13 +334,13 @@
     };
 
     AbstractChosen.prototype.winnow_results = function() {
-      var escapedSearchText, option, regex, results, results_group, searchText, startpos, text, zregex, _i, _len, _ref;
+      var escapedSearchText, highlightRegex, option, regex, results, results_group, searchText, startpos, text, _i, _len, _ref;
       this.no_results_clear();
       results = 0;
       searchText = this.get_search_text();
       escapedSearchText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-      zregex = new RegExp(escapedSearchText, 'i');
       regex = this.get_search_regex(escapedSearchText);
+      highlightRegex = this.get_highlight_regex(escapedSearchText);
       _ref = this.results_data;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -366,7 +366,7 @@
             }
             if (option.search_match) {
               if (searchText.length) {
-                startpos = option.search_text.search(zregex);
+                startpos = option.search_text.search(highlightRegex);
                 text = option.search_text.substr(0, startpos + searchText.length) + '</em>' + option.search_text.substr(startpos + searchText.length);
                 option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
               }
@@ -392,6 +392,13 @@
     AbstractChosen.prototype.get_search_regex = function(escaped_search_string) {
       var regex_anchor, regex_flag;
       regex_anchor = this.search_contains ? "" : "^";
+      regex_flag = this.case_sensitive_search ? "" : "i";
+      return new RegExp(regex_anchor + escaped_search_string, regex_flag);
+    };
+
+    AbstractChosen.prototype.get_highlight_regex = function(escaped_search_string) {
+      var regex_anchor, regex_flag;
+      regex_anchor = this.search_contains ? "" : "\\b";
       regex_flag = this.case_sensitive_search ? "" : "i";
       return new RegExp(regex_anchor + escaped_search_string, regex_flag);
     };
