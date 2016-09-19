@@ -133,6 +133,7 @@
       this.mouse_on_container = false;
       this.results_showing = false;
       this.result_highlighted = null;
+      this.is_rtl = this.options.rtl || /\bchosen-rtl\b/.test(this.form_field.className);
       this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
       this.disable_search_threshold = this.options.disable_search_threshold || 0;
       this.disable_search = this.options.disable_search || false;
@@ -588,8 +589,7 @@
 
     Chosen.prototype.setup = function() {
       this.form_field_jq = $(this.form_field);
-      this.current_selectedIndex = this.form_field.selectedIndex;
-      return this.is_rtl = this.form_field_jq.hasClass("chosen-rtl");
+      return this.current_selectedIndex = this.form_field.selectedIndex;
     };
 
     Chosen.prototype.set_up_html = function() {
