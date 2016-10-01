@@ -1015,7 +1015,7 @@
       this.single_set_selected_text();
       this.show_search_field_default();
       this.results_reset_cleanup();
-      this.form_field_jq.trigger("change");
+      this.trigger_form_field_change();
       if (this.active_field) {
         return this.results_hide();
       }
@@ -1057,8 +1057,8 @@
         }
         this.show_search_field_default();
         if (this.is_multiple || this.form_field.selectedIndex !== this.current_selectedIndex) {
-          this.form_field_jq.trigger("change", {
-            'selected': this.form_field.options[item.options_index].value
+          this.trigger_form_field_change({
+            selected: this.form_field.options[item.options_index].value
           });
         }
         this.current_selectedIndex = this.form_field.selectedIndex;
@@ -1091,7 +1091,7 @@
         if (this.results_showing) {
           this.winnow_results();
         }
-        this.form_field_jq.trigger("change", {
+        this.trigger_form_field_change({
           deselected: this.form_field.options[result_data.options_index].value
         });
         this.search_field_scale();
@@ -1256,6 +1256,11 @@
           'width': w + 'px'
         });
       }
+    };
+
+    Chosen.prototype.trigger_form_field_change = function(extra) {
+      this.form_field_jq.trigger("input", extra);
+      return this.form_field_jq.trigger("change", extra);
     };
 
     return Chosen;
