@@ -1235,7 +1235,7 @@
       if (this.is_multiple) {
         h = 0;
         w = 0;
-        style_block = "position:absolute; left: -1000px; top: -1000px; display:none;";
+        style_block = "position:absolute; left: -1000px; top: -1000px; display: none; white-space: pre;";
         styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
         for (_i = 0, _len = styles.length; _i < _len; _i++) {
           style = styles[_i];
