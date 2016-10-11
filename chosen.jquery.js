@@ -1099,8 +1099,8 @@
         }
         if (!(this.is_multiple && (!this.hide_results_on_select || (evt.metaKey || evt.ctrlKey)))) {
           this.results_hide();
+          this.show_search_field_default();
         }
-        this.show_search_field_default();
         if (this.is_multiple || this.form_field.selectedIndex !== this.current_selectedIndex) {
           this.trigger_form_field_change({
             selected: this.form_field.options[item.options_index].value
