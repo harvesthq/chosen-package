@@ -444,6 +444,49 @@
       }
     };
 
+    AbstractChosen.prototype.keydown_checker = function(evt) {
+      var stroke, _ref;
+      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      this.search_field_scale();
+      if (stroke !== 8 && this.pending_backstroke) {
+        this.clear_backstroke();
+      }
+      switch (stroke) {
+        case 8:
+          this.backstroke_length = this.get_search_field_value().length;
+          break;
+        case 9:
+          if (this.results_showing && !this.is_multiple) {
+            this.result_select(evt);
+          }
+          this.mouse_on_container = false;
+          break;
+        case 13:
+          if (this.results_showing) {
+            evt.preventDefault();
+          }
+          break;
+        case 27:
+          if (this.results_showing) {
+            evt.preventDefault();
+          }
+          break;
+        case 32:
+          if (this.disable_search) {
+            evt.preventDefault();
+          }
+          break;
+        case 38:
+          evt.preventDefault();
+          this.keyup_arrow();
+          break;
+        case 40:
+          evt.preventDefault();
+          this.keydown_arrow();
+          break;
+      }
+    };
+
     AbstractChosen.prototype.keyup_checker = function(evt) {
       var stroke, _ref;
       stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
@@ -451,33 +494,34 @@
       switch (stroke) {
         case 8:
           if (this.is_multiple && this.backstroke_length < 1 && this.choices_count() > 0) {
-            return this.keydown_backstroke();
+            this.keydown_backstroke();
           } else if (!this.pending_backstroke) {
             this.result_clear_highlight();
-            return this.results_search();
+            this.results_search();
           }
           break;
         case 13:
           evt.preventDefault();
           if (this.results_showing) {
-            return this.result_select(evt);
+            this.result_select(evt);
           }
           break;
         case 27:
           if (this.results_showing) {
             this.results_hide();
           }
-          return true;
+          break;
         case 9:
-        case 38:
-        case 40:
         case 16:
-        case 91:
         case 17:
         case 18:
+        case 38:
+        case 40:
+        case 91:
           break;
         default:
-          return this.results_search();
+          this.results_search();
+          break;
       }
     };
 
@@ -887,7 +931,7 @@
       this.container.addClass("chosen-with-drop");
       this.results_showing = true;
       this.search_field.focus();
-      this.search_field.val(this.search_field.val());
+      this.search_field.val(this.get_search_field_value());
       this.winnow_results();
       return this.form_field_jq.trigger("chosen:showing_dropdown", {
         chosen: this
@@ -1001,7 +1045,7 @@
     Chosen.prototype.choice_destroy = function(link) {
       if (this.result_deselect(link[0].getAttribute("data-option-array-index"))) {
         this.show_search_field_default();
-        if (this.is_multiple && this.choices_count() > 0 && this.search_field.val().length < 1) {
+        if (this.is_multiple && this.choices_count() > 0 && this.get_search_field_value().length < 1) {
           this.results_hide();
         }
         link.parents('li').first().remove();
@@ -1111,8 +1155,12 @@
       return this.selected_item.addClass("chosen-single-with-deselect");
     };
 
+    Chosen.prototype.get_search_field_value = function() {
+      return this.search_field.val();
+    };
+
     Chosen.prototype.get_search_text = function() {
-      return $('<div/>').text($.trim(this.search_field.val())).html();
+      return $('<div/>').text($.trim(this.get_search_field_value())).html();
     };
 
     Chosen.prototype.winnow_results_set_highlight = function() {
@@ -1192,44 +1240,6 @@
       return this.pending_backstroke = null;
     };
 
-    Chosen.prototype.keydown_checker = function(evt) {
-      var stroke, _ref1;
-      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
-      this.search_field_scale();
-      if (stroke !== 8 && this.pending_backstroke) {
-        this.clear_backstroke();
-      }
-      switch (stroke) {
-        case 8:
-          this.backstroke_length = this.search_field.val().length;
-          break;
-        case 9:
-          if (this.results_showing && !this.is_multiple) {
-            this.result_select(evt);
-          }
-          this.mouse_on_container = false;
-          break;
-        case 13:
-          if (this.results_showing) {
-            evt.preventDefault();
-          }
-          break;
-        case 32:
-          if (this.disable_search) {
-            evt.preventDefault();
-          }
-          break;
-        case 38:
-          evt.preventDefault();
-          this.keyup_arrow();
-          break;
-        case 40:
-          evt.preventDefault();
-          this.keydown_arrow();
-          break;
-      }
-    };
-
     Chosen.prototype.search_field_scale = function() {
       var div, f_width, h, style, style_block, styles, w, _i, _len;
       if (this.is_multiple) {
@@ -1244,7 +1254,7 @@
         div = $('<div />', {
           'style': style_block
         });
-        div.text(this.search_field.val());
+        div.text(this.get_search_field_value());
         $('body').append(div);
         w = div.width() + 25;
         div.remove();
