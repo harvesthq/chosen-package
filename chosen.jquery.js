@@ -770,7 +770,10 @@
     };
 
     Chosen.prototype.destroy = function() {
-      $(this.container[0].ownerDocument).unbind("click.chosen", this.click_test_action);
+      $(this.container[0].ownerDocument).unbind('click.chosen', this.click_test_action);
+      if (this.form_field_label.length > 0) {
+        this.form_field_label.unbind('click.chosen');
+      }
       if (this.search_field[0].tabIndex) {
         this.form_field_jq[0].tabIndex = this.search_field[0].tabIndex;
       }
