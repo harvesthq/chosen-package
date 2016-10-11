@@ -159,6 +159,7 @@
       } else {
         this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || AbstractChosen.default_single_text;
       }
+      this.default_text = this.escape_html(this.default_text);
       return this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
     };
 
@@ -1160,7 +1161,11 @@
     };
 
     Chosen.prototype.get_search_text = function() {
-      return $('<div/>').text($.trim(this.get_search_field_value())).html();
+      return this.escape_html($.trim(this.get_search_field_value()));
+    };
+
+    Chosen.prototype.escape_html = function(text) {
+      return $('<div/>').text(text).html();
     };
 
     Chosen.prototype.winnow_results_set_highlight = function() {
