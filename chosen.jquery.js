@@ -738,7 +738,7 @@
         _this.container_mousedown(evt);
       });
       this.form_field_jq.bind("chosen:close.chosen", function(evt) {
-        _this.input_blur(evt);
+        _this.close_field(evt);
       });
       this.search_field.bind('blur.chosen', function(evt) {
         _this.input_blur(evt);
@@ -854,7 +854,8 @@
       this.container.removeClass("chosen-container-active");
       this.clear_backstroke();
       this.show_search_field_default();
-      return this.search_field_scale();
+      this.search_field_scale();
+      return this.search_field.blur();
     };
 
     Chosen.prototype.activate_field = function() {
@@ -1048,7 +1049,11 @@
 
     Chosen.prototype.choice_destroy = function(link) {
       if (this.result_deselect(link[0].getAttribute("data-option-array-index"))) {
-        this.show_search_field_default();
+        if (this.active_field) {
+          this.search_field.focus();
+        } else {
+          this.show_search_field_default();
+        }
         if (this.is_multiple && this.choices_count() > 0 && this.get_search_field_value().length < 1) {
           this.results_hide();
         }
