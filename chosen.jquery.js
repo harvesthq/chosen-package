@@ -538,6 +538,9 @@
 
     AbstractChosen.prototype.clipboard_event_checker = function(evt) {
       var _this = this;
+      if (this.is_disabled) {
+        return;
+      }
       return setTimeout((function() {
         return _this.results_search();
       }), 50);
