@@ -702,11 +702,9 @@
       var _this = this;
       this.container.bind('touchstart.chosen', function(evt) {
         _this.container_mousedown(evt);
-        return evt.preventDefault();
       });
       this.container.bind('touchend.chosen', function(evt) {
         _this.container_mouseup(evt);
-        return evt.preventDefault();
       });
       this.container.bind('mousedown.chosen', function(evt) {
         _this.container_mousedown(evt);
@@ -814,10 +812,11 @@
     };
 
     Chosen.prototype.container_mousedown = function(evt) {
+      var _ref1;
       if (this.is_disabled) {
         return;
       }
-      if (evt && evt.type === "mousedown" && !this.results_showing) {
+      if (evt && ((_ref1 = evt.type) === 'mousedown' || _ref1 === 'touchstart') && !this.results_showing) {
         evt.preventDefault();
       }
       if (!((evt != null) && ($(evt.target)).hasClass("search-choice-close"))) {
