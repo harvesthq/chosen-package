@@ -794,20 +794,16 @@
     };
 
     Chosen.prototype.search_field_disabled = function() {
-      this.is_disabled = this.form_field_jq[0].disabled;
+      this.is_disabled = this.form_field.disabled || this.form_field_jq.parents('fieldset').is(':disabled');
+      this.container.toggleClass('chosen-disabled', this.is_disabled);
+      this.search_field[0].disabled = this.is_disabled;
+      if (!this.is_multiple) {
+        this.selected_item.unbind('focus.chosen', this.activate_field);
+      }
       if (this.is_disabled) {
-        this.container.addClass('chosen-disabled');
-        this.search_field[0].disabled = true;
-        if (!this.is_multiple) {
-          this.selected_item.unbind("focus.chosen", this.activate_action);
-        }
         return this.close_field();
-      } else {
-        this.container.removeClass('chosen-disabled');
-        this.search_field[0].disabled = false;
-        if (!this.is_multiple) {
-          return this.selected_item.bind("focus.chosen", this.activate_action);
-        }
+      } else if (!this.is_multiple) {
+        return this.selected_item.bind('focus.chosen', this.activate_field);
       }
     };
 
