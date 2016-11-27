@@ -593,6 +593,18 @@
       return tmp.innerHTML;
     };
 
+    AbstractChosen.prototype.get_single_html = function() {
+      return "<a class=\"chosen-single chosen-default\">\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
+    };
+
+    AbstractChosen.prototype.get_multi_html = function() {
+      return "<ul class=\"chosen-choices\">\n  <li class=\"search-field\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" value=\"" + this.default_text + "\" />\n  </li>\n</ul>\n<div class=\"chosen-drop\">\n  <ul class=\"chosen-results\"></ul>\n</div>";
+    };
+
+    AbstractChosen.prototype.get_no_results_html = function(terms) {
+      return "<li class=\"no-results\">\n  " + this.results_none_found + " <span>" + terms + "</span>\n</li>";
+    };
+
     AbstractChosen.browser_is_supported = function() {
       if ("Microsoft Internet Explorer" === window.navigator.appName) {
         return document.documentMode >= 8;
@@ -662,17 +674,17 @@
       }
       container_props = {
         'class': container_classes.join(' '),
-        'style': "width: " + (this.container_width()) + ";",
         'title': this.form_field.title
       };
       if (this.form_field.id.length) {
         container_props.id = this.form_field.id.replace(/[^\w]/g, '_') + "_chosen";
       }
       this.container = $("<div />", container_props);
+      this.container.width(this.container_width());
       if (this.is_multiple) {
-        this.container.html('<ul class="chosen-choices"><li class="search-field"><input type="text" value="' + this.default_text + '" class="default" autocomplete="off" style="width:25px;" /></li></ul><div class="chosen-drop"><ul class="chosen-results"></ul></div>');
+        this.container.html(this.get_multi_html());
       } else {
-        this.container.html('<a class="chosen-single chosen-default"><span>' + this.default_text + '</span><div><b></b></div></a><div class="chosen-drop"><div class="chosen-search"><input type="text" autocomplete="off" /></div><ul class="chosen-results"></ul></div>');
+        this.container.html(this.get_single_html());
       }
       this.form_field_jq.hide().after(this.container);
       this.dropdown = this.container.find('div.chosen-drop').first();
@@ -1192,8 +1204,7 @@
 
     Chosen.prototype.no_results = function(terms) {
       var no_results_html;
-      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
-      no_results_html.find("span").first().html(terms);
+      no_results_html = this.get_no_results_html(terms);
       this.search_results.append(no_results_html);
       return this.form_field_jq.trigger("chosen:no_results", {
         chosen: this
@@ -1259,31 +1270,30 @@
     };
 
     Chosen.prototype.search_field_scale = function() {
-      var div, f_width, h, style, style_block, styles, w, _i, _len;
-      if (this.is_multiple) {
-        h = 0;
-        w = 0;
-        style_block = "position:absolute; left: -1000px; top: -1000px; display: none; white-space: pre;";
-        styles = ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height', 'text-transform', 'letter-spacing'];
-        for (_i = 0, _len = styles.length; _i < _len; _i++) {
-          style = styles[_i];
-          style_block += style + ":" + this.search_field.css(style) + ";";
-        }
-        div = $('<div />', {
-          'style': style_block
-        });
-        div.text(this.get_search_field_value());
-        $('body').append(div);
-        w = div.width() + 25;
-        div.remove();
-        f_width = this.container.outerWidth();
-        if (w > f_width - 10) {
-          w = f_width - 10;
-        }
-        return this.search_field.css({
-          'width': w + 'px'
-        });
+      var container_width, div, style, style_block, styles, width, _i, _len;
+      if (!this.is_multiple) {
+        return;
       }
+      style_block = {
+        position: 'absolute',
+        left: '-1000px',
+        top: '-1000px',
+        display: 'none',
+        whiteSpace: 'pre'
+      };
+      styles = ['fontSize', 'fontStyle', 'fontWeight', 'fontFamily', 'lineHeight', 'textTransform', 'letterSpacing'];
+      for (_i = 0, _len = styles.length; _i < _len; _i++) {
+        style = styles[_i];
+        style_block[style] = this.search_field.css(style);
+      }
+      div = $('<div />').css(style_block);
+      div.text(this.get_search_field_value());
+      $('body').append(div);
+      width = div.width() + 25;
+      div.remove();
+      container_width = this.container.outerWidth();
+      width = Math.min(container_width - 10, width);
+      return this.search_field.width(width);
     };
 
     Chosen.prototype.trigger_form_field_change = function(extra) {
