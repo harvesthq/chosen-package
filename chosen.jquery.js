@@ -450,6 +450,7 @@
 
     AbstractChosen.prototype.choices_click = function(evt) {
       evt.preventDefault();
+      this.activate_field();
       if (!(this.results_showing || this.is_disabled)) {
         return this.results_show();
       }
