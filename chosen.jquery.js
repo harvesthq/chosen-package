@@ -391,7 +391,7 @@
 
     AbstractChosen.prototype.get_search_regex = function(escaped_search_string) {
       var regex_flag, regex_string;
-      regex_string = this.search_contains ? escaped_search_string : "\\b" + escaped_search_string + "\\w*\\b";
+      regex_string = this.search_contains ? escaped_search_string : "(^|\\s|\\b)" + escaped_search_string + "[^\\s]*";
       if (!(this.enable_split_word_search || this.search_contains)) {
         regex_string = "^" + regex_string;
       }
@@ -400,7 +400,12 @@
     };
 
     AbstractChosen.prototype.search_string_match = function(search_string, regex) {
-      return regex.exec(search_string);
+      var match;
+      match = regex.exec(search_string);
+      if (!this.search_contains && (match != null ? match[1] : void 0)) {
+        match.index += 1;
+      }
+      return match;
     };
 
     AbstractChosen.prototype.choices_count = function() {
