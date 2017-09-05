@@ -1298,7 +1298,7 @@
     };
 
     Chosen.prototype.search_field_scale = function() {
-      var container_width, div, i, len, style, style_block, styles, width;
+      var div, i, len, style, style_block, styles, width;
       if (!this.is_multiple) {
         return;
       }
@@ -1319,8 +1319,9 @@
       $('body').append(div);
       width = div.width() + 25;
       div.remove();
-      container_width = this.container.outerWidth();
-      width = Math.min(container_width - 10, width);
+      if (this.container.is(':visible')) {
+        width = Math.min(this.container.outerWidth() - 10, width);
+      }
       return this.search_field.width(width);
     };
 

@@ -1339,8 +1339,9 @@
       document.body.appendChild(div);
       width = div.measure('width') + 25;
       div.remove();
-      container_width = this.container.getWidth();
-      width = Math.min(container_width - 10, width);
+      if (container_width = this.container.getWidth()) {
+        width = Math.min(container_width - 10, width);
+      }
       return this.search_field.setStyle({
         width: width + 'px'
       });
