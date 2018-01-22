@@ -572,7 +572,7 @@
     };
 
     AbstractChosen.prototype.get_single_html = function() {
-      return "<a class=\"chosen-single chosen-default\">\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
+      return "<a class=\"chosen-single chosen-default\">\n  <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
     };
 
     AbstractChosen.prototype.get_multi_html = function() {
@@ -983,6 +983,9 @@
         });
         return false;
       }
+      if (!this.is_multiple) {
+        this.search_container.insert(this.search_field);
+      }
       this.container.addClassName("chosen-with-drop");
       this.results_showing = true;
       this.search_field.focus();
@@ -1000,6 +1003,12 @@
     Chosen.prototype.results_hide = function() {
       if (this.results_showing) {
         this.result_clear_highlight();
+        if (!this.is_multiple) {
+          this.selected_item.insert({
+            top: this.search_field
+          });
+          this.search_field.focus();
+        }
         this.container.removeClassName("chosen-with-drop");
         this.form_field.fire("chosen:hiding_dropdown", {
           chosen: this
