@@ -574,7 +574,7 @@
     };
 
     AbstractChosen.prototype.get_single_html = function() {
-      return "<a class=\"chosen-single chosen-default\">\n  <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
+      return "<a class=\"chosen-single chosen-default\">\n  <input class=\"chosen-focus-input\" type=\"text\" autocomplete=\"off\" />\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
     };
 
     AbstractChosen.prototype.get_multi_html = function() {
@@ -667,7 +667,8 @@
       }
       this.form_field_jq.hide().after(this.container);
       this.dropdown = this.container.find('div.chosen-drop').first();
-      this.search_field = this.container.find('input').first();
+      this.search_field = this.container.find('input.chosen-search-input');
+      this.focus_field = this.container.find('input.chosen-focus-input');
       this.search_results = this.container.find('ul.chosen-results').first();
       this.search_field_scale();
       this.search_no_results = this.container.find('li.no-results').first();
@@ -690,6 +691,7 @@
     };
 
     Chosen.prototype.register_observers = function() {
+      var transfer_value;
       this.container.on('touchstart.chosen', (function(_this) {
         return function(evt) {
           _this.container_mousedown(evt);
@@ -812,9 +814,49 @@
           };
         })(this));
       } else {
-        return this.container.on('click.chosen', function(evt) {
+        this.container.on('click.chosen', function(evt) {
           evt.preventDefault();
         });
+        this.focus_field.on('blur.chosen', (function(_this) {
+          return function(evt) {
+            _this.input_blur(evt);
+          };
+        })(this));
+        this.focus_field.on('focus.chosen', (function(_this) {
+          return function(evt) {
+            _this.input_focus(evt);
+          };
+        })(this));
+        transfer_value = (function(_this) {
+          return function() {
+            _this.search_field.val(_this.focus_field.val());
+            return _this.focus_field.val('');
+          };
+        })(this);
+        this.focus_field.on('keyup.chosen', (function(_this) {
+          return function(evt) {
+            transfer_value();
+            _this.keyup_checker(evt);
+          };
+        })(this));
+        this.focus_field.on('keydown.chosen', (function(_this) {
+          return function(evt) {
+            transfer_value();
+            _this.keydown_checker(evt);
+          };
+        })(this));
+        this.focus_field.on('cut.chosen', (function(_this) {
+          return function(evt) {
+            setTimeout(transfer_value, 0);
+            _this.clipboard_event_checker(evt);
+          };
+        })(this));
+        return this.focus_field.on('paste.chosen', (function(_this) {
+          return function(evt) {
+            setTimeout(transfer_value, 0);
+            _this.clipboard_event_checker(evt);
+          };
+        })(this));
       }
     };
 
@@ -911,7 +953,6 @@
       }
       this.container.addClass("chosen-container-active");
       this.active_field = true;
-      this.search_field.val(this.search_field.val());
       return this.search_field.focus();
     };
 
@@ -935,9 +976,11 @@
         this.single_set_selected_text();
         if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
           this.search_field[0].readOnly = true;
+          this.focus_field[0].readOnly = true;
           this.container.addClass("chosen-container-single-nosearch");
         } else {
           this.search_field[0].readOnly = false;
+          this.focus_field[0].readOnly = false;
           this.container.removeClass("chosen-container-single-nosearch");
         }
       }
@@ -983,9 +1026,6 @@
         });
         return false;
       }
-      if (!this.is_multiple) {
-        this.search_container.append(this.search_field);
-      }
       this.container.addClass("chosen-with-drop");
       this.results_showing = true;
       this.search_field.focus();
@@ -1003,10 +1043,11 @@
     Chosen.prototype.results_hide = function() {
       if (this.results_showing) {
         this.result_clear_highlight();
-        if (!this.is_multiple) {
-          this.selected_item.prepend(this.search_field);
-          this.search_field.focus();
-        }
+        setTimeout(((function(_this) {
+          return function() {
+            return _this.focus_field.focus();
+          };
+        })(this)), 0);
         this.container.removeClass("chosen-with-drop");
         this.form_field_jq.trigger("chosen:hiding_dropdown", {
           chosen: this
@@ -1016,11 +1057,12 @@
     };
 
     Chosen.prototype.set_tab_index = function(el) {
-      var ti;
+      var ref, ti;
       if (this.form_field.tabIndex) {
         ti = this.form_field.tabIndex;
         this.form_field.tabIndex = -1;
-        return this.search_field[0].tabIndex = ti;
+        this.search_field[0].tabIndex = ti;
+        return (ref = this.focus_field[0]) != null ? ref.tabIndex = ti : void 0;
       }
     };
 
