@@ -149,7 +149,7 @@
 
     AbstractChosen.prototype.choice_label = function(item) {
       if (this.include_group_label_in_selected && (item.group_label != null)) {
-        return "<b class='group-name'>" + item.group_label + "</b>" + item.html;
+        return "<b class='group-name'>" + (this.escape_html(item.group_label)) + "</b>" + item.html;
       } else {
         return item.html;
       }
