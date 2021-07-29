@@ -122,6 +122,7 @@
       this.disable_search_threshold = this.options.disable_search_threshold || 0;
       this.disable_search = this.options.disable_search || false;
       this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
+      this.enable_multi_word_search = this.options.enable_multi_word_search != null ? this.options.enable_multi_word_search : true;
       this.group_search = this.options.group_search != null ? this.options.group_search : true;
       this.search_contains = this.options.search_contains || false;
       this.single_backstroke_delete = this.options.single_backstroke_delete != null ? this.options.single_backstroke_delete : true;
@@ -368,8 +369,8 @@
               if (query.length) {
                 startpos = search_match.index;
                 prefix = text.slice(0, startpos);
-                fix = text.slice(startpos, startpos + query.length);
-                suffix = text.slice(startpos + query.length);
+                fix = text.slice(startpos, startpos + search_match[0].length);
+                suffix = text.slice(startpos + search_match[0].length);
                 option.highlighted_html = (this.escape_html(prefix)) + "<em>" + (this.escape_html(fix)) + "</em>" + (this.escape_html(suffix));
               }
               if (results_group != null) {
@@ -398,6 +399,9 @@
       regex_string = this.search_contains ? escaped_search_string : "(^|\\s|\\b)" + escaped_search_string + "[^\\s]*";
       if (!(this.enable_split_word_search || this.search_contains)) {
         regex_string = "^" + regex_string;
+      }
+      if (this.enable_multi_word_search) {
+        regex_string = regex_string.replace(/\\? /,'.*?');
       }
       regex_flag = this.case_sensitive_search ? "" : "i";
       return new RegExp(regex_string, regex_flag);
